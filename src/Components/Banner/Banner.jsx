@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import React from 'react';
 import FindJobHeroTop from './FindJobHeroTop';
+import BannerGrid from './BannerGrid';
 
 const Banner = () => {
     return (
@@ -10,6 +11,7 @@ const Banner = () => {
 
             <FindJobHeroTop></FindJobHeroTop>
 
+          <BannerGrid></BannerGrid>
         </div>
     );
 };
