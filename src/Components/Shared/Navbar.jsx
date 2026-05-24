@@ -14,7 +14,7 @@ export default function Navbar() {
     ];
 
     return (
-        <nav className="sticky top-0 z-50 w-full bg-transparent py-4 backdrop-blur-xl">
+        <nav className="fixed absolute top-0 z-50 w-full bg-transparent py-4">
             <div className="mx-auto flex container items-center justify-between px-4 py-5 md:px-8">
 
                 {/* Logo */}
@@ -39,13 +39,13 @@ export default function Navbar() {
                     <div className="h-5 w-px bg-white/10" />
                     <Link
                         href="#"
-                        className="text-sm font-semibold text-violet-400 no-underline hover:text-violet-300"
+                        className="text-sm font-semibold no-underline hover:text-violet-300"
                     >
                         Sign In
                     </Link>
 
                     <Button
-                        
+
                         className="bg-white rounded-lg px-7 font-semibold text-black hover:bg-gray-200"
                     >
                         Get Started
