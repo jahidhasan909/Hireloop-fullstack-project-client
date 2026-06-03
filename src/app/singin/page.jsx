@@ -1,5 +1,6 @@
 "use client";
 
+import { authClient } from "@/lib/auth-client";
 import {Check} from "@gravity-ui/icons";
 import {
   Button,
@@ -10,14 +11,44 @@ import {
   Label,
   TextField,
 } from "@heroui/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function SignInPage() {
-  const onSubmit = (e) => {
-    e.preventDefault();
 
-    const formData = new FormData(e.currentTarget);
 
-  };
+  const route=useRouter()
+
+
+
+
+  const onSubmit = async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.currentTarget)
+        const LogINUser = Object.fromEntries(formData.entries())
+        
+      
+        const { data, error } = await authClient.signIn.email({
+            
+            password: LogINUser.password,
+            
+            email: LogINUser.email
+
+        })
+        if (data) {
+            toast.success('Sing In Successfully ! ')
+            route.push('/')
+        }
+        if (error) {
+            toast.error(error.message)
+        }
+
+
+
+    };
+
 
   return (
     <div className="flex min-h-screen items-center justify-center  px-4">
@@ -89,9 +120,9 @@ export default function SignInPage() {
         {/* Footer */}
         <p className="mt-4 text-center text-sm text-gray-500">
           Don’t have an account?{" "}
-          <a href="/signup" className="text-blue-600 hover:underline">
+          <Link href="/singup" className="text-blue-600 hover:underline">
             Sign up
-          </a>
+          </Link>
         </p>
       </div>
     </div>

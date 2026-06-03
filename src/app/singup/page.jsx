@@ -1,5 +1,6 @@
 "use client";
 
+import { authClient } from "@/lib/auth-client";
 import { Check } from "@gravity-ui/icons";
 import {
     Button,
@@ -10,12 +11,44 @@ import {
     Label,
     TextField,
 } from "@heroui/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { Radio, RadioGroup } from "@heroui/react";
+import { useState } from "react";
 
 export default function SignUpPage() {
-    const onSubmit = (e) => {
+
+
+    const [role, setRole] = useState("seeker");
+
+    const route = useRouter()
+    const onSubmit = async (e) => {
         e.preventDefault();
 
-        const formData = new FormData(e.currentTarget);
+        const formData = new FormData(e.currentTarget)
+        const newUser = Object.fromEntries(formData.entries())
+        const { password, confirmPassword } = newUser
+        if (password !== confirmPassword) {
+            return toast.error('Passwords do not match');
+        }
+        const { data, error } = await authClient.signUp.email({
+            name: newUser.name,
+            password: newUser.password,
+            image: newUser.image,
+            email: newUser.email,
+            role: role
+
+        })
+        if (data) {
+            toast.success('Sing Up Successfully ! ')
+            route.push('/singin')
+        }
+        if (error) {
+            toast.error(error.message)
+        }
+
+
 
     };
 
@@ -114,34 +147,66 @@ export default function SignUpPage() {
                         isRequired
                         name="confirmPassword"
                         type="password"
-                        validate={(value, formData) => {
-                            const password = formData?.get("password")?.toString();
 
-                            if (value !== password) {
-                                return "Passwords do not match";
-                            }
-                            return null;
-                        }}
                     >
                         <Label>Confirm Password</Label>
                         <Input placeholder="Re-enter password" />
                         <FieldError />
                     </TextField>
 
+
+
+
+
+
+
+
+                    <div className="flex flex-col gap-4">
+                        <Label>Role</Label>
+                        <RadioGroup value={role} onChange={setRole} defaultValue="seeker" name="role" orientation="horizontal">
+                            <Radio value="seeker">
+                                <Radio.Control>
+                                    <Radio.Indicator />
+                                </Radio.Control>
+                                <Radio.Content>
+                                    <Label>Job Seeker</Label>
+
+                                </Radio.Content>
+                            </Radio>
+                            <Radio value="recruiter">
+                                <Radio.Control>
+                                    <Radio.Indicator />
+                                </Radio.Control>
+                                <Radio.Content>
+                                    <Label>Recruiter</Label>
+
+                                </Radio.Content>
+                            </Radio>
+                        </RadioGroup>
+                    </div>
+
+
+
+
+
+
+
+
+
                     {/* Actions */}
                     <div className="flex flex-col gap-2 pt-2">
-                        <Button type="submit" className="w-full">
+                        <Button type="submit" className="w-full bg-[#045cdb]">
                             <Check className="mr-2" />
                             Create Account
                         </Button>
 
-                        <Button type="button" variant="secondary" className="w-full">
-                            Already have an account? Sign In
-                        </Button>
+                        <div className="text-center">
+                            Already have an account? <Link className="text-[#045cdb]" href={'/singin'}>Sign In</Link>
+                        </div>
                     </div>
                 </Form>
 
-             
+
             </div>
         </div>
     );

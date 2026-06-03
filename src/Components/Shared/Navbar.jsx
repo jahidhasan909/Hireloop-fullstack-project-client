@@ -1,11 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import { Link, Button } from "@heroui/react";
+import { use, useState } from "react";
+import { Link, Button, Avatar } from "@heroui/react";
 import Image from "next/image";
+import { authClient } from "@/lib/auth-client";
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+
+    const { isPending, data } = authClient.useSession()
+
+    const user = data?.user
+
+    if (isPending) {
+        return <div>loading...</div>
+    }
+
+
 
     const navItems = [
         { name: "Browse Jobs", href: "#" },
@@ -14,16 +26,17 @@ export default function Navbar() {
     ];
 
     return (
-        <nav className="fixed absolute top-0 z-50 w-full bg-transparent py-4">
+        <nav className="fixed absolute top-0 z-50  w-full bg-transparent py-4">
             <div className="mx-auto flex container items-center justify-between px-4 py-5 md:px-8">
 
                 {/* Logo */}
                 <div className="flex items-center">
-                    <Image src={'/images/logo.png'} width={60} height={60} alt="logo" className="w-full h-[47px]"></Image>
+                    <Link href="/">
+                        <Image src={'/images/logo.png'} width={60} height={60} alt="logo" className="w-full h-[47px]"></Image></Link>
                 </div>
 
                 {/* Desktop Menu */}
-                <div className="hidden items-center gap-10 rounded-2xl border border-white/10 bg-white/5 px-8 py-3 backdrop-blur-lg md:flex">
+                <div className="hidden items-center gap-10 rounded-2xl border border-white/10 bg-white/5 px-8 py-3 backdrop-blur-lg md:flex  z-50">
                     {navItems.map((item, index) => (
                         <div key={item.name} className="flex items-center gap-8">
                             <Link
@@ -36,13 +49,34 @@ export default function Navbar() {
 
                         </div>
                     ))}
+
+
+
                     <div className="h-5 w-px bg-white/10" />
-                    <Link
-                        href="#"
-                        className="text-sm font-semibold no-underline hover:text-violet-300"
-                    >
-                        Sign In
-                    </Link>
+
+                    {
+                        user ?
+                            <ul className="flex items-center gap-2">
+                                <li>
+                                    <Avatar>
+                                        <Avatar.Image alt="user img" src={user?.image} />
+                                        <Avatar.Fallback>{user?.name.charAt(0, 2)}</Avatar.Fallback>
+                                    </Avatar>
+                                </li>
+                                <li>
+                                    <Button onClick={() => authClient.signOut()} variant="" className={'text-sm font-semibold no-underline hover:text-violet-300 text-gray-300'}>Sign Out</Button>
+                                </li>
+                            </ul>
+
+                            :
+
+                            <Link
+                                href="/singin"
+                                className="text-sm font-semibold no-underline hover:text-violet-300"
+                            >
+                                Sign In
+                            </Link>
+                    }
 
                     <Button
 
@@ -106,7 +140,7 @@ export default function Navbar() {
                         ))}
 
                         <Link
-                            href="#"
+                            href="/singin"
                             className="block text-base font-semibold text-violet-400"
                         >
                             Sign In

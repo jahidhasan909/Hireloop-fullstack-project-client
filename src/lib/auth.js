@@ -2,8 +2,8 @@ import { betterAuth } from "better-auth";
 import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 
-const client = new MongoClient("mongodb://localhost:27017/database");
-const db = client.db();
+const client = new MongoClient(process.env.MONGODB_URI);
+const db = client.db(`${process.env.DATABASE_COLLACTION}`);
 
 export const auth = betterAuth({
     emailAndPassword: {
@@ -12,4 +12,11 @@ export const auth = betterAuth({
     database: mongodbAdapter(db, {
         client
     }),
+     user: {
+       additionalFields: {
+          role: {
+              default:"seeker"
+            } 
+        }
+    }
 });
