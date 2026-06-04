@@ -3,7 +3,7 @@ import React from 'react';
 
 const DashBoardlayout = ({children}) => {
     return (
-        <div className='mt-20 flex '>
+        <div className='mt-32 flex '>
             <SideBar/>
             <div className='flex-1'>
                 {children}
