@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { 
-    Form, Fieldset, TextField, Input, Label, Select, ListBox, TextArea, Button, FieldError 
+import {
+    Form, Fieldset, TextField, Input, Label, Select, ListBox, TextArea, Button, FieldError
 } from '@heroui/react'; // Hero UI v3 setup
 import { ArrowUpToLine, Globe, Pin, ChevronDown } from '@gravity-ui/icons';
+import { Newcompany } from '@/lib/action/company';
+import toast from 'react-hot-toast';
 
 // Define layout and styling utility strings matching your design tokens
 const textInputClass = "w-full bg-[#121212] border border-zinc-800 focus:border-zinc-700 text-white rounded-lg h-12 px-4 outline-none placeholder:text-zinc-600 transition-colors";
@@ -18,7 +20,7 @@ export default function CompanyProfile() {
     const [company, setCompany] = useState(null); // null means Unregistered
     const [isEditing, setIsEditing] = useState(false);
     const [errors, setErrors] = useState({});
-    
+
     // Logo Upload states
     const [logoUrl, setLogoUrl] = useState('');
     const [isUploading, setIsUploading] = useState(false);
@@ -38,7 +40,7 @@ export default function CompanyProfile() {
 
         try {
             // Replace with your runtime environment variable route or direct client-key configuration
-            const IMGBB_API_KEY = 'YOUR_IMGBB_API_KEY'; 
+            const IMGBB_API_KEY = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
             const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
                 method: 'POST',
                 body: formData,
@@ -57,10 +59,10 @@ export default function CompanyProfile() {
     };
 
     // Form Submission Code
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
-        
+
         const companyName = formData.get('companyName');
         const websiteUrl = formData.get('websiteUrl');
         const location = formData.get('location');
@@ -78,7 +80,7 @@ export default function CompanyProfile() {
         }
 
         setErrors({});
-        
+
         // Save payload 
         const updatedCompany = {
             name: companyName,
@@ -92,6 +94,13 @@ export default function CompanyProfile() {
         };
 
         setCompany(updatedCompany);
+
+        const payload = await Newcompany(updatedCompany)
+
+        if (payload) {
+            toast.success('company added successfully')
+        }
+
         setIsEditing(false);
     };
 
@@ -117,7 +126,7 @@ export default function CompanyProfile() {
                         To post jobs or setup team workspaces, setup your primary corporate operational details first.
                     </p>
                 </div>
-                <Button 
+                <Button
                     onClick={() => setIsEditing(true)}
                     className="bg-white text-black font-semibold hover:bg-zinc-200 rounded-lg px-6 transition-colors h-11"
                 >
@@ -133,10 +142,10 @@ export default function CompanyProfile() {
             <div className="max-w-4xl mx-auto my-12 p-8 bg-[#09090b] border border-zinc-900 rounded-xl text-white space-y-8">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-zinc-900">
                     <div className="flex items-center gap-4">
-                        <img 
-                            src={company.logo} 
-                            alt={`${company.name} Logo`} 
-                            className="w-16 h-16 rounded-xl border border-zinc-800 object-cover bg-zinc-900" 
+                        <img
+                            src={company.logo}
+                            alt={`${company.name} Logo`}
+                            className="w-16 h-16 rounded-xl border border-zinc-800 object-cover bg-zinc-900"
                         />
                         <div>
                             <div className="flex items-center gap-3">
@@ -148,7 +157,7 @@ export default function CompanyProfile() {
                             <p className="text-zinc-400 text-sm mt-0.5 capitalize">{company.industry} • {company.employeeRange} employees</p>
                         </div>
                     </div>
-                    <Button 
+                    <Button
                         onClick={() => {
                             setLogoUrl(company.logo);
                             setSelectedIndustry(company.industry);
@@ -191,7 +200,7 @@ export default function CompanyProfile() {
         <div className="max-w-4xl mx-auto my-12 p-8 bg-[#09090b] border border-zinc-900 rounded-xl">
             <Form onSubmit={handleSubmit} className="space-y-8" validationErrors={errors} validationBehavior="aria">
                 <Fieldset className="space-y-6 w-full">
-                    
+
                     {/* Row 1: Company Name & Industry Category */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <TextField name="companyName" defaultValue={company?.name} isInvalid={!!errors.companyName} className="flex flex-col gap-1.5 w-full">
@@ -200,8 +209,8 @@ export default function CompanyProfile() {
                             {errors.companyName && <FieldError className="text-xs text-danger mt-1">{errors.companyName}</FieldError>}
                         </TextField>
 
-                        <Select 
-                            className="w-full flex flex-col gap-1.5" 
+                        <Select
+                            className="w-full flex flex-col gap-1.5"
                             name="industry"
                             selectedKeys={[selectedIndustry]}
                             onSelectionChange={(keys) => setSelectedIndustry(Array.from(keys)[0])}
@@ -224,10 +233,10 @@ export default function CompanyProfile() {
 
                     {/* Row 2: Website URL & Location */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <TextField 
-                            name="websiteUrl" 
-                            defaultValue={company?.websiteUrl ? company.websiteUrl.replace('https://', '') : ''} 
-                            isInvalid={!!errors.websiteUrl} 
+                        <TextField
+                            name="websiteUrl"
+                            defaultValue={company?.websiteUrl ? company.websiteUrl.replace('https://', '') : ''}
+                            isInvalid={!!errors.websiteUrl}
                             className="flex flex-col gap-1.5 w-full"
                         >
                             <Label className="text-zinc-400 font-medium text-sm">Website URL</Label>
@@ -252,8 +261,8 @@ export default function CompanyProfile() {
 
                     {/* Row 3: Employee Count Range & Company Logo */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-                        <Select 
-                            className="w-full flex flex-col gap-1.5" 
+                        <Select
+                            className="w-full flex flex-col gap-1.5"
                             name="employeeRange"
                             selectedKeys={[selectedEmployeeRange]}
                             onSelectionChange={(keys) => setSelectedEmployeeRange(Array.from(keys)[0])}
