@@ -13,3 +13,7 @@ export const getCompanyJobs = async (companyId, status = 'active') => {
 export const getJobs = async () => {
     return ServerFatch('/api/job')
 }
+
+export const getJobssingle = async (id) => {
+    return ServerFatch(`/api/job/${id}`)
+}
