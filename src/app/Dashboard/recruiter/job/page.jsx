@@ -2,11 +2,12 @@ import { getCompanyJobs } from '@/lib/api/jobs';
 import React from 'react';
 import { Table, Chip, Button, Tooltip } from "@heroui/react";
 // Assuming Gravity Icons maps to standard lucide equivalents; adjust paths if using a custom package
-import { Eye, Edit2, Trash2 } from "lucide-react"; 
+import { Eye, Edit2, Trash2 } from "lucide-react";
+import { getCompanyloginrecruiter } from '@/lib/api/companis';
 
 const RecruiterJobs = async () => {
-    const companyId = 'company_123'; 
-    const jobs = await getCompanyJobs(companyId) || []; 
+    const company = await getCompanyloginrecruiter();
+    const jobs = await getCompanyJobs(company._id) || [];
 
     // Helper to determine status chip coloring
     const getStatusColor = (status) => {
@@ -79,9 +80,9 @@ const RecruiterJobs = async () => {
 
                                     {/* Status */}
                                     <Table.Cell>
-                                        <Chip 
-                                            color={getStatusColor(job.status)} 
-                                            size="sm" 
+                                        <Chip
+                                            color={getStatusColor(job.status)}
+                                            size="sm"
                                             variant="soft"
                                             className="capitalize"
                                         >
@@ -93,30 +94,30 @@ const RecruiterJobs = async () => {
                                     <Table.Cell>
                                         <div className="relative flex items-center gap-2">
                                             <Tooltip content="Video Details">
-                                                <Button 
-                                                    isIconOnly 
-                                                    size="sm" 
-                                                    variant="light" 
+                                                <Button
+                                                    isIconOnly
+                                                    size="sm"
+                                                    variant="light"
                                                     aria-label="View video details"
                                                 >
                                                     <Eye className="text-default-400 w-4 h-4" />
                                                 </Button>
                                             </Tooltip>
                                             <Tooltip content="Edit Job">
-                                                <Button 
-                                                    isIconOnly 
-                                                    size="sm" 
-                                                    variant="light" 
+                                                <Button
+                                                    isIconOnly
+                                                    size="sm"
+                                                    variant="light"
                                                     aria-label="Edit job"
                                                 >
                                                     <Edit2 className="text-default-400 w-4 h-4" />
                                                 </Button>
                                             </Tooltip>
                                             <Tooltip content="Delete Job">
-                                                <Button 
-                                                    isIconOnly 
-                                                    size="sm" 
-                                                    variant="light" 
+                                                <Button
+                                                    isIconOnly
+                                                    size="sm"
+                                                    variant="light"
                                                     color="danger"
                                                     aria-label="Delete job"
                                                 >

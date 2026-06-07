@@ -1,10 +1,14 @@
 import React from 'react';
 import PostJobPage from './CompanyForm';
-import { getCompanyloginrecruiter } from '@/lib/api/companis';
+import { getSession } from '@/lib/core/sassion';
+import { getCompanis } from '@/lib/api/companis';
+
 
 const CompanyPage = async () => {
 
-    const company = await getCompanyloginrecruiter()
+    const user = await getSession()
+    const company = await getCompanis(user?.id)
+
 
 
     return (

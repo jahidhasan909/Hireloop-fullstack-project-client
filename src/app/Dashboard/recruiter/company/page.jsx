@@ -6,7 +6,10 @@ import { getCompanis } from '@/lib/api/companis';
 const Companypage = async () => {
 
     const user = await getSession()
-    const company = await getCompanis()
+    const company = await getCompanis(user?.id)
+   
+   
+    
 
 
 

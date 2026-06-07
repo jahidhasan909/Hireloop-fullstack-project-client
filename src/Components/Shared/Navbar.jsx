@@ -20,7 +20,7 @@ export default function Navbar() {
 
 
     const navItems = [
-        { name: "Browse Jobs", href: "#" },
+        { name: "Browse Jobs", href: "/jobs" },
         { name: "Company", href: "#" },
         { name: "Pricing", href: "#" },
     ];

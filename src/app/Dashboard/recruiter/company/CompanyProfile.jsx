@@ -115,7 +115,7 @@ export default function CompanyProfile({ recruiter, recruiterCompany }) {
     };
 
     // --- STATE 1: UNREGISTERED STATE ---
-    if (!company && !isEditing) {
+    if (!company?._id && !isEditing) {
         return (
             <div className="max-w-4xl mx-auto my-12 p-8 bg-[#09090b] border border-zinc-900 rounded-xl text-center space-y-6">
                 <div className="w-16 h-16 bg-zinc-900 rounded-full flex items-center justify-center mx-auto border border-zinc-800">
