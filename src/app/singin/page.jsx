@@ -1,7 +1,7 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import {Check} from "@gravity-ui/icons";
+import { Check } from "@gravity-ui/icons";
 import {
   Button,
   Description,
@@ -12,42 +12,43 @@ import {
   TextField,
 } from "@heroui/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 
 export default function SignInPage() {
 
 
-  const route=useRouter()
+  const route = useRouter()
 
+  const searchParams = useSearchParams()
 
-
+  const search = searchParams.get('redirect') || '/';
 
   const onSubmit = async (e) => {
-        e.preventDefault();
+    e.preventDefault();
 
-        const formData = new FormData(e.currentTarget)
-        const LogINUser = Object.fromEntries(formData.entries())
-        
-      
-        const { data, error } = await authClient.signIn.email({
-            
-            password: LogINUser.password,
-            
-            email: LogINUser.email
-
-        })
-        if (data) {
-            toast.success('Sing In Successfully ! ')
-            route.push('/')
-        }
-        if (error) {
-            toast.error(error.message)
-        }
+    const formData = new FormData(e.currentTarget)
+    const LogINUser = Object.fromEntries(formData.entries())
 
 
+    const { data, error } = await authClient.signIn.email({
 
-    };
+      password: LogINUser.password,
+
+      email: LogINUser.email
+
+    })
+    if (data) {
+      toast.success('Sing In Successfully ! ')
+      route.push(search)
+    }
+    if (error) {
+      toast.error(error.message)
+    }
+
+
+
+  };
 
 
   return (
@@ -120,7 +121,7 @@ export default function SignInPage() {
         {/* Footer */}
         <p className="mt-4 text-center text-sm text-gray-500">
           Don’t have an account?{" "}
-          <Link href="/singup" className="text-blue-600 hover:underline">
+          <Link href={`/singup?redirect=${search}`} className="text-blue-600 hover:underline">
             Sign up
           </Link>
         </p>

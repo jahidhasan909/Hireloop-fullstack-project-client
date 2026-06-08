@@ -12,14 +12,16 @@ import {
     TextField,
 } from "@heroui/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import { Radio, RadioGroup } from "@heroui/react";
 import { useState } from "react";
 
 export default function SignUpPage() {
 
+    const searchParams = useSearchParams()
 
+    const search = searchParams.get('redirect') || '/singup';
     const [role, setRole] = useState("seeker");
 
     const route = useRouter()
@@ -42,7 +44,7 @@ export default function SignUpPage() {
         })
         if (data) {
             toast.success('Sing Up Successfully ! ')
-            route.push('/singin')
+            route.push(search)
         }
         if (error) {
             toast.error(error.message)
@@ -201,7 +203,7 @@ export default function SignUpPage() {
                         </Button>
 
                         <div className="text-center">
-                            Already have an account? <Link className="text-[#045cdb]" href={'/singin'}>Sign In</Link>
+                            Already have an account? <Link className="text-[#045cdb]" href={`/singin?redirect=${search}`}>Sign In</Link>
                         </div>
                     </div>
                 </Form>

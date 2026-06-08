@@ -117,7 +117,7 @@ const ApplyPage = async ({ params }) => {
         {/* Apply Button */}
         <div className="flex gap-4">
           <Link
-            href={`/apply/${job._id}`}
+            href={`/jobs/${job._id}/apply`}
             className="bg-primary text-white border px-8 py-3 rounded-xl bg-blue-600 font-medium"
           >
             Apply Now
