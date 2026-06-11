@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import {
     Button,
     Description,
@@ -11,9 +11,15 @@ import {
     TextArea,
     TextField,
 } from "@heroui/react";
+import { AddApplication } from "@/lib/action/application";
+import toast from "react-hot-toast";
 
 const ApplyJobForm = ({ job, user }) => {
-    const handleSubmit = (e) => {
+
+    const formRef = useRef(null);
+
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
 
@@ -25,7 +31,7 @@ const ApplyJobForm = ({ job, user }) => {
             companyId: job?.companyId,
             companyName: job?.companyName,
 
-            applicantId: user?._id,
+            applicantId: user?.id,
             applicantName: user?.name,
             applicantEmail: user?.email,
             applicantImage: user?.image,
@@ -41,11 +47,19 @@ const ApplyJobForm = ({ job, user }) => {
             appliedAt: new Date(),
         };
 
-        console.log(data);
+        const applydata = await AddApplication(applicationData)
+        if (applydata.insertedId) {
+            toast.success('Information submit successfully !')
+            e.target.reset();
+        }
     };
+
+
+
 
     return (
         <Form
+            ref={formRef}
             className="w-full max-w-2xl border p-4 rounded-2xl mt-7 flex flex-col gap-4 mx-auto"
             onSubmit={handleSubmit}
         >
