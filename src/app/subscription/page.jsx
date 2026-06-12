@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@heroui/react';
 import React, { useState } from 'react';
 
 const SubscriptionPage = () => {
@@ -15,6 +16,7 @@ const SubscriptionPage = () => {
     const seekerPlans = [
         {
             name: 'Free',
+            id: 'seeker_free',
             price: '$0',
             period: '/forever',
             description: 'Essential features to start your job hunt.',
@@ -30,6 +32,7 @@ const SubscriptionPage = () => {
         {
             name: 'Pro',
             price: '$19',
+            id: 'seeker_pro',
             period: '/month',
             description: 'Perfect for active job hunters looking to accelerate their search.',
             features: [
@@ -44,6 +47,7 @@ const SubscriptionPage = () => {
         {
             name: 'Premium',
             price: '$39',
+            id: 'seeker_premium',
             period: '/month',
             description: 'Ultimate visibility and tools to land your dream job fast.',
             features: [
@@ -61,6 +65,7 @@ const SubscriptionPage = () => {
     const recruiterPlans = [
         {
             name: 'Free',
+            id: 'recruiter_free',
             price: '$0',
             period: '/forever',
             description: 'Perfect for managing your company\'s first year of hiring.',
@@ -75,6 +80,7 @@ const SubscriptionPage = () => {
         {
             name: 'Growth',
             price: '$49',
+            id: 'recruiter_growth',
             period: '/month',
             description: 'Ideal for scaling startups and expanding core teams.',
             features: [
@@ -88,6 +94,7 @@ const SubscriptionPage = () => {
         },
         {
             name: 'Enterprise',
+            id: 'recruiter_enterprise',
             price: '$149',
             period: '/month',
             description: 'Full-suite hiring toolkit designed for large corporate teams.',
@@ -127,7 +134,7 @@ const SubscriptionPage = () => {
 
     return (
         <div className='min-h-screen pt-49 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 py-16 px-4 sm:px-6 lg:px-8'>
-            
+
             {/* Header Section */}
             <div className='max-w-3xl mx-auto text-center mb-12'>
                 <h1 className='text-4xl font-extrabold tracking-tight sm:text-5xl bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent'>
@@ -141,21 +148,19 @@ const SubscriptionPage = () => {
                 <div className='mt-8 inline-flex p-1 bg-slate-200 dark:bg-slate-900 rounded-xl border border-slate-300/30'>
                     <button
                         onClick={() => setUserType('seeker')}
-                        className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
-                            userType === 'seeker'
-                                ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-white shadow-sm'
-                                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
-                        }`}
+                        className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${userType === 'seeker'
+                            ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-white shadow-sm'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                            }`}
                     >
                         For Job Seekers
                     </button>
                     <button
                         onClick={() => setUserType('recruiter')}
-                        className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
-                            userType === 'recruiter'
-                                ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-white shadow-sm'
-                                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
-                        }`}
+                        className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${userType === 'recruiter'
+                            ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-white shadow-sm'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                            }`}
                     >
                         For Recruiters
                     </button>
@@ -165,13 +170,12 @@ const SubscriptionPage = () => {
             {/* Pricing Cards Grid */}
             <div className='max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 items-start mb-24'>
                 {currentPlans.map((plan, idx) => (
-                    <div 
+                    <div
                         key={idx}
-                        className={`relative rounded-2xl p-8 bg-white dark:bg-slate-900 border transition-all duration-300 ${
-                            plan.popular 
-                                ? 'border-blue-500 ring-2 ring-blue-500/20 shadow-xl scale-105 z-10 md:-translate-y-2' 
-                                : 'border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md'
-                        }`}
+                        className={`relative rounded-2xl p-8 bg-white dark:bg-slate-900 border transition-all duration-300 ${plan.popular
+                            ? 'border-blue-500 ring-2 ring-blue-500/20 shadow-xl scale-105 z-10 md:-translate-y-2'
+                            : 'border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md'
+                            }`}
                     >
                         {plan.popular && (
                             <span className='absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white font-bold text-xs px-3 py-1 rounded-full uppercase tracking-wider'>
@@ -188,16 +192,22 @@ const SubscriptionPage = () => {
                             </div>
                         </div>
 
-                        {/* Action Button */}
-                        <button 
-                            className={`w-full py-3 px-4 rounded-xl font-semibold text-sm transition-all shadow-sm ${
-                                plan.popular
+               
+                        <form action="/api/checkout_sessions" method="POST"
+
+                        >
+                            <input type="hidden" name='plan_id' value={plan.id} />
+                            <section>
+                                <Button className={`w-full py-3 px-4 rounded-xl font-semibold text-sm transition-all shadow-sm ${plan.popular
                                     ? 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white'
                                     : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'
-                            }`}
-                        >
-                            {plan.cta}
-                        </button>
+                                    }`} variant='outline' type="submit" role="link">
+                                    {plan.cta}
+                                </Button>
+                            </section>
+                        </form>
+
+                   
 
                         <hr className='my-6 border-slate-100 dark:border-slate-800' />
 
@@ -225,8 +235,8 @@ const SubscriptionPage = () => {
                     {faqs.map((faq, index) => {
                         const isOpen = openFaq === index;
                         return (
-                            <div 
-                                key={index} 
+                            <div
+                                key={index}
                                 className='bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-all'
                             >
                                 <button
@@ -234,21 +244,20 @@ const SubscriptionPage = () => {
                                     className='w-full flex justify-between items-center p-5 text-left font-semibold text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors'
                                 >
                                     <span>{faq.question}</span>
-                                    <svg 
-                                        className={`w-5 h-5 text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180 text-blue-500' : ''}`} 
-                                        fill="none" 
-                                        viewBox="0 0 24 24" 
-                                        stroke="currentColor" 
+                                    <svg
+                                        className={`w-5 h-5 text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180 text-blue-500' : ''}`}
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
                                         strokeWidth="2"
                                     >
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </button>
-                                
-                                <div 
-                                    className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                                        isOpen ? 'max-h-40 border-t border-slate-100 dark:border-slate-800' : 'max-h-0'
-                                    }`}
+
+                                <div
+                                    className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-40 border-t border-slate-100 dark:border-slate-800' : 'max-h-0'
+                                        }`}
                                 >
                                     <p className='p-5 text-sm text-slate-600 dark:text-slate-400 leading-relaxed bg-slate-50/50 dark:bg-slate-900/50'>
                                         {faq.answer}
