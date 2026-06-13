@@ -4,6 +4,7 @@ import { getSession } from "@/lib/core/sassion";
 import { LayoutSideContentLeft, Bell, Envelope, Gear, House, Magnifier, Person, Briefcase, Bookmark, FileText, CreditCard } from "@gravity-ui/icons";
 import { Button, Drawer } from "@heroui/react";
 import { IconLayoutGrid } from "@tabler/icons-react";
+import { Building2, LayoutDashboard, Users } from "lucide-react";
 import Link from "next/link";
 
 export async function SideBar() {
@@ -29,10 +30,19 @@ export async function SideBar() {
         { icon: Person, href: "/profile", label: "Profile" },
         { icon: Gear, href: "/settings", label: "Settings" },
     ]
+    const adminNavItems = [
+        { icon: LayoutDashboard, href: "/Dashboard/admin", label: "Dashboard" },
+        { icon: Users, href: "/Dashboard/admin/users", label: "Users" },
+        { icon: Building2, href: "/Dashboard/admin/companies", label: "Companies" },
+        { icon: Briefcase, href: "/Dashboard/admin/jobs", label: "Jobs" },
+        { icon: CreditCard, href: "/Dashboard/admin/payments", label: "Payments" },
+        { icon: Gear, href: "/Dashboard/admin/settings", label: "Settings" },
+    ];
 
     const roleBaseNavItem = {
         seeker: seekerNavItems,
-        recruiter: recruiterNavItems
+        recruiter: recruiterNavItems,
+        admin:adminNavItems
     }
 
     const navItems = roleBaseNavItem[user?.role || "seeker"];
