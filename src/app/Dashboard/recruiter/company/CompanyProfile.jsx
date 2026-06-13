@@ -90,7 +90,7 @@ export default function CompanyProfile({ recruiter, recruiterCompany }) {
             location: location,
             employeeRange: selectedEmployeeRange,
             description: description,
-            status: company?.status || 'Pending',
+            status: company && company?.status ? company?.status : 'Pending',
             recruiterId: recruiter.id
         };
 
@@ -99,6 +99,8 @@ export default function CompanyProfile({ recruiter, recruiterCompany }) {
         const payload = await Newcompany(updatedCompany)
 
         if (payload) {
+            const saveCompany = { ...company, _id: payload.insertedId }
+            setCompany(saveCompany)
             toast.success('company added successfully')
         }
 
