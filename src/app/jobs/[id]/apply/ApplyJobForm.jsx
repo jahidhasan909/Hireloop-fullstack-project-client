@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 const ApplyJobForm = ({ job, user }) => {
 
     const formRef = useRef(null);
+    
 
 
     const handleSubmit = async (e) => {
@@ -30,6 +31,7 @@ const ApplyJobForm = ({ job, user }) => {
             jobTitle: job?.jobTitle,
             companyId: job?.companyId,
             companyName: job?.companyName,
+            companyLogo: job?.companyLogo,
 
             applicantId: user?.id,
             applicantName: user?.name,

@@ -14,7 +14,7 @@ export async function SideBar() {
         { icon: IconLayoutGrid, href: "/Dashboard/seeker", label: "Dashboard" },
         { icon: Magnifier, href: "/Dashboard/seeker/jobs", label: "Jobs" },
         { icon: Bookmark, href: "/Dashboard/seeker/saved-jobs", label: "Saved Jobs" },
-        { icon: FileText, href: "/Dashboard/seeker/applications", label: "Applications" },
+        { icon: FileText, href: "/Dashboard/seeker/application", label: "Applications" },
         { icon: CreditCard, href: "/Dashboard/seeker/billing", label: "Billing" },
         { icon: Gear, href: "/settings", label: "Settings" },
     ];
