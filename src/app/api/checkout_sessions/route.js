@@ -10,8 +10,8 @@ export async function POST(request) {
         const headersList = await headers()
         const origin = headersList.get('origin')
         const formData = await request.formData()
-        const plan_Id = formData.get('plan_id')
-        const price_Id = PLAN_PRICE_ID[plan_Id]
+        const planId = formData.get('plan_id')
+        const price_Id = PLAN_PRICE_ID[planId]
 
         const user = await getSession()
 
@@ -26,6 +26,7 @@ export async function POST(request) {
                 },
             ],
             mode: 'subscription',
+            metadata: { planId },
             success_url: `${origin}/subscription/success?session_id={CHECKOUT_SESSION_ID}`,
         });
         return NextResponse.redirect(session.url, 303)

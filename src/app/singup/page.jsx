@@ -34,12 +34,14 @@ export default function SignUpPage() {
         if (password !== confirmPassword) {
             return toast.error('Passwords do not match');
         }
+        const plan = role === 'seeker' ? 'seeker_free' : 'recruiter_free';
         const { data, error } = await authClient.signUp.email({
             name: newUser.name,
             password: newUser.password,
             image: newUser.image,
             email: newUser.email,
-            role: role
+            role: role,
+            plan
 
         })
         if (data) {

@@ -1,88 +1,100 @@
-import { stripe } from '@/lib/Stripe/stripe'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
+
+import { redirect } from 'next/navigation';
+import Link from 'next/link';
+// Gravity UI Icons for a high-quality production finish
+import { CircleCheckFill, Envelope, ArrowLeft } from '@gravity-ui/icons';
+import { stripe } from '@/lib/Stripe/stripe';
+import { CreateSubscriptions } from '@/lib/action/subscriptions';
 
 export default async function Success({ searchParams }) {
-  // Next.js 15+ এ searchParams একটি Promise, তাই await করা সঠিক আছে
-  const params = await searchParams
-  const session_id = params?.session_id
+    const { session_id } = await searchParams;
 
-  if (!session_id) {
-    throw new Error('Please provide a valid session_id (`cs_test_...`)')
-  }
+    if (!session_id)
+        throw new Error('Please provide a valid session_id (`cs_test_...`)');
 
-  // Stripe থেকে ডাটা রিট্রিভ করা হচ্ছে
-  const session = await stripe.checkout.sessions.retrieve(session_id, {
-    expand: ['line_items', 'payment_intent']
-  })
+    const {
+        status,
+        customer_details: { email: customerEmail },
+        metadata
+    } = await stripe.checkout.sessions.retrieve(session_id, {
+        expand: ['line_items', 'payment_intent']
+    });
 
-  const status = session?.status
-  const customerEmail = session?.customer_details?.email
+    if (status === 'open') {
+        return redirect('/');
+    }
 
-  // সেশন কমপ্লিট না হয়ে ওপেন থাকলে হোমপেজে রিডাইরেক্ট করুন
-  if (status === 'open') {
-    return redirect('/')
-  }
+    if (status === 'complete') {
+        const subsInfo = {
+            email: customerEmail,
+            planId: metadata.planId
+        }
+        // update the user table about the new plan
+        const result = await CreateSubscriptions(subsInfo);
+        console.log(result);
 
-  // পেমেন্ট সফল হলে
-  if (status === 'complete') {
-    
-    // 💡 টিপস: আপনি যদি আপনার ডাটাবেজ (যেমন Prisma/MongoDB) আপডেট করতে চান, 
-    // তবে এই লাইনে আপনার DB Logic রান করতে পারেন। যেমন:
-    // await updateUserSubscription(customerEmail, session.id);
+        return (
+            <div className="w-full min-h-screen bg-zinc-950 text-zinc-50 flex flex-col justify-center items-center p-6 select-none">
+                {/* Decorative ambient glow blur background */}
+                <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-72 h-72 bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none" />
 
-    return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 text-center shadow-xl">
-          
-          {/* গ্রিন সাকসেস আইকন */}
-          <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 mb-6">
-            <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
+                <section
+                    id="success"
+                    className="relative max-w-md w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-8 shadow-2xl text-center overflow-hidden animate-in fade-in-50 slide-in-from-bottom-4 duration-500"
+                >
+                    {/* Animated Green Checkmark Badge Container */}
+                    <div className="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-6 border border-emerald-500/20 shadow-[0_0_24px_rgba(16,185,129,0.1)]">
+                        <CircleCheckFill className="w-8 h-8 text-emerald-500" />
+                    </div>
 
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2">
-            Payment Successful!
-          </h1>
-          
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">
-            We appreciate your business! A confirmation email and invoice will be sent shortly to{' '}
-            <span className="font-semibold text-slate-700 dark:text-slate-200">{customerEmail || 'your email'}</span>.
-          </p>
+                    {/* Core Status Message */}
+                    <h1 className="text-2xl font-extrabold text-zinc-50 tracking-tight mb-2">
+                        Payment Successful!
+                    </h1>
+                    <p className="text-zinc-400 text-sm leading-relaxed mb-6">
+                        We appreciate your business! Your account features have been provisioned and your plan is now active.
+                    </p>
 
-          <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 mb-8 text-xs text-left space-y-2 border border-slate-100 dark:border-slate-800">
-            <div className="flex justify-between">
-              <span className="text-slate-400">Order Status:</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-semibold uppercase">{status}</span>
+                    {/* Receipt Info Box Card */}
+                    <div className="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-4 text-left space-y-3.5 text-xs mb-8">
+                        <div className="flex items-start gap-2.5">
+                            <Envelope className="w-4 h-4 text-zinc-500 shrink-0 mt-0.5" />
+                            <div>
+                                <span className="block font-semibold text-zinc-400 mb-0.5">Confirmation Email</span>
+                                <span className="text-zinc-200 break-all">{customerEmail}</span>
+                            </div>
+                        </div>
+
+                        <div className="border-t border-zinc-800/60 pt-3 flex flex-col gap-1 text-zinc-500">
+                            <span>Have billing questions or need custom configuration support?</span>
+                            <a
+                                href="mailto:orders@example.com"
+                                className="text-blue-400 hover:text-blue-300 font-medium inline-flex items-center transition"
+                            >
+                                orders@example.com
+                            </a>
+                        </div>
+                    </div>
+
+                    {/* Interactive Navigation Calls to Action */}
+                    <div className="space-y-3">
+                        <Link
+                            href="/dashboard"
+                            className="block w-full text-center text-xs font-semibold px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl shadow-lg shadow-blue-950/30 transition duration-200"
+                        >
+                            Go to Workspace Dashboard
+                        </Link>
+
+                        <Link
+                            href="/"
+                            className="inline-flex items-center justify-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-200 py-1 transition"
+                        >
+                            <ArrowLeft className="w-3.5 h-3.5" />
+                            Return to Homepage
+                        </Link>
+                    </div>
+                </section>
             </div>
-            <div className="flex justify-between">
-              <span className="text-slate-400">Session ID:</span>
-              <span className="text-slate-600 dark:text-slate-300 truncate max-w-[180px]">{session_id}</span>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <Link 
-              href="/" 
-              className="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl text-sm transition-all shadow-md"
-            >
-              Go to Dashboard
-            </Link>
-            
-            <p className="text-xs text-slate-400 dark:text-slate-500">
-              Have questions? Email us at{' '}
-              <a href="mailto:support@example.com" className="text-blue-500 hover:underline">
-                support@example.com
-              </a>
-            </p>
-          </div>
-
-        </div>
-      </div>
-    )
-  }
-
-  // যদি স্ট্যাটাস complete বা open কোনোটিই না হয় (যেমন expired)
-  return redirect('/subscription')
+        );
+    }
 }

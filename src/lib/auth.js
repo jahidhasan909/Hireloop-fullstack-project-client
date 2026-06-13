@@ -12,11 +12,14 @@ export const auth = betterAuth({
     database: mongodbAdapter(db, {
         client
     }),
-     user: {
-       additionalFields: {
-          role: {
-              default:"seeker"
-            } 
+    user: {
+        additionalFields: {
+            role: {
+                default: "seeker"
+            },
+            plan: {
+                default:'seeker_free'
+            }
         }
     }
 });
