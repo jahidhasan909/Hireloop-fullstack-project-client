@@ -1,11 +1,26 @@
 
 
-import { LayoutSideContentLeft, Bell, Envelope, Gear, House, Magnifier, Person, Briefcase } from "@gravity-ui/icons";
+import { getSession } from "@/lib/core/sassion";
+import { LayoutSideContentLeft, Bell, Envelope, Gear, House, Magnifier, Person, Briefcase, Bookmark, FileText, CreditCard } from "@gravity-ui/icons";
 import { Button, Drawer } from "@heroui/react";
+import { IconLayoutGrid } from "@tabler/icons-react";
 import Link from "next/link";
 
-export function SideBar() {
-    const navItems = [
+export async function SideBar() {
+
+    const user = await getSession()
+
+    const seekerNavItems = [
+        { icon: IconLayoutGrid, href: "/Dashboard/seeker", label: "Dashboard" },
+        { icon: Magnifier, href: "/Dashboard/seeker/jobs", label: "Jobs" },
+        { icon: Bookmark, href: "/Dashboard/seeker/saved-jobs", label: "Saved Jobs" },
+        { icon: FileText, href: "/Dashboard/seeker/applications", label: "Applications" },
+        { icon: CreditCard, href: "/Dashboard/seeker/billing", label: "Billing" },
+        { icon: Gear, href: "/settings", label: "Settings" },
+    ];
+
+
+    const recruiterNavItems = [
         { icon: House, href: "/Dashboard/recruiter", label: "Home" },
         { icon: Magnifier, href: "/Dashboard/recruiter/job", label: "Jobs" },
         { icon: Bell, href: "/Dashboard/recruiter/job/new", label: "Post A Job" },
@@ -13,7 +28,14 @@ export function SideBar() {
         { icon: Envelope, href: "/messages", label: "Messages" },
         { icon: Person, href: "/profile", label: "Profile" },
         { icon: Gear, href: "/settings", label: "Settings" },
-    ];
+    ]
+
+    const roleBaseNavItem = {
+        seeker: seekerNavItems,
+        recruiter: recruiterNavItems
+    }
+
+    const navItems = roleBaseNavItem[user?.role || "seeker"];
 
     const navContent = <nav className="flex flex-col gap-1">
         {navItems.map((item) => (

@@ -25,6 +25,22 @@ export default function Navbar() {
         { name: "Pricing", href: "/subscription" },
     ];
 
+    const dashboardNavlinks = {
+        seeker: '/Dashboard/seeker',
+        recruiter: '/Dashboard/recruiter'
+    }
+
+    if (user?.email) {
+        navItems.push(
+            {
+                name: "Dashboard",
+                href: dashboardNavlinks[user?.role || 'seeker']
+            }
+        )
+    }
+
+
+
     return (
         <nav className="fixed absolute top-0 z-50  w-full bg-transparent py-4">
             <div className="mx-auto flex container items-center justify-between px-4 py-5 md:px-8">
