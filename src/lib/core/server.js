@@ -29,3 +29,18 @@ export const ServerMutation = async (path, data) => {
 
 
 }
+export const ServerMutationPatch = async (path, data) => {
+
+    const res = await fetch(`${baseURL}${path}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+
+
+    return await res.json()
+
+
+}
